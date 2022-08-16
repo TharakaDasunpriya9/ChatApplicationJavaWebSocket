@@ -26,7 +26,7 @@ public class server extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        cmdStart.setBackground(new java.awt.Color(102, 255, 102));
+        cmdStart.setBackground(new java.awt.Color(153, 255, 102));
         cmdStart.setText("Start Server");
         cmdStart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

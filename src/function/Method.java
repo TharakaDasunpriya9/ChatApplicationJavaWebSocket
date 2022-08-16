@@ -117,6 +117,30 @@ public class Method {
         out.flush();
     }
 
+    public static void sendFile(File file) throws Exception {
+        FileInputStream in = new FileInputStream(file);
+        byte data[] = new byte[in.available()];
+        in.read(data);
+        in.close();
+        String fileSize = convertSize(file.length());
+        Message ms = new Message();
+        ms.setStatus("File");
+        ms.setID(Method.getMyID());
+        ms.setData(data);
+        ms.setName(file.getName() + "!" + fileSize);
+        out.writeObject(ms);
+        out.flush();
+    }
+
+    public static void sendEmoji(String emoji) throws Exception {
+        Message ms = new Message();
+        ms.setStatus("Emoji");
+        ms.setID(Method.getMyID());
+        ms.setMessage(emoji);
+        out.writeObject(ms);
+        out.flush();
+    }
+
     private static String getDurationString(int seconds) {
         int minutes = (seconds % 3600) / 60;
         seconds = seconds % 60;

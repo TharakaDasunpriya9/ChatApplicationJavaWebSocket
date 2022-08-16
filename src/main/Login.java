@@ -1,4 +1,5 @@
 package main;
+
 import function.FileChooser;
 import function.Method;
 import java.awt.Image;
@@ -44,9 +45,8 @@ public class Login extends javax.swing.JFrame {
         setTitle("Log in");
         setResizable(false);
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBackground(new java.awt.Color(204, 255, 255));
 
-        txtIP.setBackground(new java.awt.Color(204, 204, 204));
         txtIP.setFont(new java.awt.Font("Khmer SBBIC Serif", 1, 18)); // NOI18N
         txtIP.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtIP.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
@@ -57,7 +57,6 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
-        txtUser.setBackground(new java.awt.Color(204, 204, 204));
         txtUser.setFont(new java.awt.Font("Khmer SBBIC Serif", 1, 18)); // NOI18N
         txtUser.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtUser.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
@@ -84,6 +83,7 @@ public class Login extends javax.swing.JFrame {
 
         jLayeredPane1.setLayout(new javax.swing.OverlayLayout(jLayeredPane1));
 
+        border.setBackground(new java.awt.Color(204, 255, 255));
         border.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         border.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/border.png"))); // NOI18N
         border.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));

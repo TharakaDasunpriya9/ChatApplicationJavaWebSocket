@@ -15,6 +15,10 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URL;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -23,15 +27,29 @@ import javax.swing.JScrollPane;
 import javax.swing.Timer;
 import javax.swing.filechooser.FileFilter;
 import message.Message;
+import my_swing.Emoji;
+import my_swing.Emoji_Group;
 import my_swing.Get_Box;
 import my_swing.Friend_Box;
 import my_swing.Get_Box_New;
+import my_swing.Get_Emoji;
+import my_swing.Get_Emoji_New;
+import my_swing.Get_File;
+import my_swing.Get_File_New;
 import my_swing.Get_Photo_Box;
 import my_swing.Get_Photo_Box_New;
+import my_swing.Get_Sound;
+import my_swing.Get_Sound_New;
 import my_swing.Send_Box;
 import my_swing.Send_Box_New;
+import my_swing.Send_Emoji;
+import my_swing.Send_Emoji_New;
+import my_swing.Send_File;
+import my_swing.Send_File_New;
 import my_swing.Send_Photo_Box;
 import my_swing.Send_Photo_Box_New;
+import my_swing.Send_Sound;
+import my_swing.Send_Sound_New;
 
 public class Main extends javax.swing.JFrame {
 
@@ -43,6 +61,7 @@ public class Main extends javax.swing.JFrame {
     private void open() {
         setIconImage(new ImageIcon(getClass().getResource("/icon/icon.png")).getImage());
         popUp.add(panel);
+        popUp_emoji.add(panel_emoji);
         popMix.add(panelMix);
         popMix.setBackground(new Color(0, 0, 0, 0));
         Method.setFram(this);
@@ -52,6 +71,37 @@ public class Main extends javax.swing.JFrame {
         for (int i = 0; i < 10; i++) {
             cmdSendActionPerformed(null);
         }
+        Emoji_Group eg1 = new Emoji_Group("emoji_green.png", 28);
+        eg1.setName("emoji_green");
+        eg1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                setEmoji(eg1);
+            }
+        });
+        panelGroup.add(eg1);
+        Emoji_Group eg2 = new Emoji_Group("emoji_yellow.png", 28);
+        eg2.setName("emoji_yellow");
+        eg2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                panelEmoji.removeAll();
+                for (int i = 1; i <= eg2.getIcons(); i++) {
+                    Emoji emo = new Emoji(eg2.getName() + " (" + i + ").png");
+                    emo.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent ae) {
+                            setEmoji(emo.getName());
+                        }
+                    });
+                    panelEmoji.add(emo);
+                }
+                panelEmoji.revalidate();
+                panelEmoji.repaint();
+            }
+        });
+        panelGroup.add(eg2);
+        setEmoji(eg1);
     }
 
     @SuppressWarnings("unchecked")
@@ -313,7 +363,7 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
-        panel_bg.setBackground(new java.awt.Color(255, 255, 255));
+        panel_bg.setBackground(new java.awt.Color(204, 255, 255));
 
         spChat.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
         spChat.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -352,11 +402,11 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Khmer SBBIC Serif", 1, 14)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Calibri", 3, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel1.setText("List Friend");
+        jLabel1.setText("Friend List");
 
-        jLabel2.setFont(new java.awt.Font("Khmer SBBIC Serif", 1, 14)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Calibri", 3, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
         jLabel2.setText("Chat");
 
@@ -372,6 +422,7 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
+        cmdLogOut.setBackground(new java.awt.Color(204, 204, 255));
         cmdLogOut.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
         cmdLogOut.setForeground(new java.awt.Color(51, 51, 51));
         cmdLogOut.setText("Sign out");
@@ -394,40 +445,43 @@ public class Main extends javax.swing.JFrame {
                 .addGroup(panel_bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(spFriend)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_bgLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(cmdLogOut, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panel_bgLayout.createSequentialGroup()
+                        .addComponent(cmdLogOut, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 15, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_bgLayout.createSequentialGroup()
-                        .addComponent(txt, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)
+                        .addComponent(txt)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmdMore)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmdSend, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(spChat, javax.swing.GroupLayout.DEFAULT_SIZE, 625, Short.MAX_VALUE)
+                    .addComponent(spChat)
                     .addGroup(panel_bgLayout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(10, 301, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panel_bgLayout.setVerticalGroup(
             panel_bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_bgLayout.createSequentialGroup()
-                .addContainerGap(10, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(panel_bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(6, 6, 6)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1))
+                .addGroup(panel_bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(spFriend, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                    .addComponent(spChat))
                 .addGroup(panel_bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(spFriend, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(spChat, javax.swing.GroupLayout.PREFERRED_SIZE, 414, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addGroup(panel_bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt)
-                    .addComponent(cmdMore, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
-                    .addComponent(cmdSend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cmdLogOut, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(panel_bgLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                        .addGroup(panel_bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txt)
+                            .addComponent(cmdMore, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                            .addComponent(cmdSend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(panel_bgLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(cmdLogOut, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -435,7 +489,7 @@ public class Main extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel_bg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panel_bg, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -446,6 +500,21 @@ public class Main extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void setEmoji(Emoji_Group eg1) {
+        panelEmoji.removeAll();
+        for (int i = 1; i <= eg1.getIcons(); i++) {
+            Emoji emo = new Emoji(eg1.getName() + " (" + i + ").png");
+            emo.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                    setEmoji(emo.getName());
+                }
+            });
+            panelEmoji.add(emo);
+        }
+        panelEmoji.revalidate();
+        panelEmoji.repaint();
+    }
     private void cmdSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdSendActionPerformed
         if (txt.getName().equals("have") && !txt.getText().equals("")) {
             try {
@@ -485,11 +554,16 @@ public class Main extends javax.swing.JFrame {
                             newFriend(ms.getImage(), ms.getID(), ms.getName().split("!")[0], ms.getName().split("!")[1]);
                         } else if (status.equals("Photo")) {
                             getPhoto(ms.getID(), ms.getImage());
+                        } else if (status.equals("File")) {
+                            getFile(ms.getID(), ms.getName(), ms.getImage());
                         } else if (status.equals("Error")) {
                             errorFrient(ms.getID());
-                       
+                        } else if (status.equals("Emoji")) {
+                            getEmoji(ms.getID(), ms.getMessage());
                         } else if (status.equals("GetFile")) {
                             download(ms);
+                        } else if (status.equals("Sound")) {
+                            getSound(ms.getID(), ms.getData(), ms.getMessage());
                         }
                     }
                 } catch (Exception e) {
@@ -517,12 +591,14 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_cmdPhotoActionPerformed
 
     private void cmdEmojiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdEmojiActionPerformed
-       
+        popUp.setVisible(false);
+        popUp_emoji.show(txt, 5, -365);
     }//GEN-LAST:event_cmdEmojiActionPerformed
 
     private void cmdFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdFileActionPerformed
         try {
             popUp.setVisible(false);
+            setFile();
         } catch (Exception e) {
             showStatus("Error : " + e.getMessage());
         }
@@ -535,12 +611,14 @@ public class Main extends javax.swing.JFrame {
     private void cmdMixMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmdMixMousePressed
         cmdMix.setBackground(new Color(94, 197, 95));
         cmdMix.setText("Starting");
+        Method.getRecoder().captureAudio();
     }//GEN-LAST:event_cmdMixMousePressed
 
     private void cmdMixMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmdMixMouseReleased
         try {
             cmdMix.setBackground(new Color(242, 67, 67));
             cmdMix.setText("Start");
+            Method.sendSound(Method.getRecoder().stop(), Method.getRecoder().getTime());
             popMix.setVisible(false);
         } catch (Exception e) {
             showStatus("Error : " + e.getMessage());
@@ -587,6 +665,7 @@ public class Main extends javax.swing.JFrame {
                 box.setMessage(ID, ms);
                 panelChat.add(box);
             }
+            playSound();
         }
         currentID = ID;
         refresh(panelChat);
@@ -614,6 +693,91 @@ public class Main extends javax.swing.JFrame {
                 box.setPhoto(ID, image);
                 panelChat.add(box);
             }
+            playSound();
+        }
+        currentID = ID;
+        refresh(panelChat);
+        scrollToBottom(spChat);
+    }
+
+    private void getEmoji(int ID, String emoji) {
+        if (ID == Method.getMyID()) {
+            if (ID == currentID) {
+                Send_Emoji box = new Send_Emoji();
+                box.setPhoto(emoji);
+                panelChat.add(box);
+            } else {
+                Send_Emoji_New box = new Send_Emoji_New();
+                box.setPhoto(ID, emoji);
+                panelChat.add(box);
+            }
+        } else {
+            if (ID == currentID) {
+                Get_Emoji box = new Get_Emoji();
+                box.setPhoto(emoji);
+                panelChat.add(box);
+            } else {
+                Get_Emoji_New box = new Get_Emoji_New();
+                box.setPhoto(ID, emoji);
+                panelChat.add(box);
+            }
+            playSound();
+        }
+        currentID = ID;
+        refresh(panelChat);
+        scrollToBottom(spChat);
+    }
+
+    private void getFile(int ID, String ms, ImageIcon icon) {
+        if (ID == Method.getMyID()) {
+            if (ID == currentID) {
+                Send_File box = new Send_File();
+                box.set(ms, icon);
+                panelChat.add(box);
+            } else {
+                Send_File_New box = new Send_File_New();
+                box.set(ID, ms, icon);
+                panelChat.add(box);
+            }
+        } else {
+            if (ID == currentID) {
+                Get_File box = new Get_File();
+                box.set(ms, icon);
+                panelChat.add(box);
+            } else {
+                Get_File_New box = new Get_File_New();
+                box.set(ID, ms, icon);
+                panelChat.add(box);
+            }
+            playSound();
+        }
+        currentID = ID;
+        refresh(panelChat);
+        scrollToBottom(spChat);
+    }
+
+    private void getSound(int ID, byte[] sound, String time) {
+        if (ID == Method.getMyID()) {
+            if (ID == currentID) {
+                Send_Sound box = new Send_Sound();
+                box.set(sound, time);
+                panelChat.add(box);
+            } else {
+                Send_Sound_New box = new Send_Sound_New();
+                box.set(ID, sound, time);
+                panelChat.add(box);
+            }
+        } else {
+            if (ID == currentID) {
+                Get_Sound box = new Get_Sound();
+                box.set(sound, time);
+                panelChat.add(box);
+            } else {
+                Get_Sound_New box = new Get_Sound_New();
+                box.set(ID, sound, time);
+                panelChat.add(box);
+            }
+            playSound();
         }
         currentID = ID;
         refresh(panelChat);
@@ -682,6 +846,17 @@ public class Main extends javax.swing.JFrame {
         }
     }
 
+    private void setFile() throws Exception {
+        JFileChooser ch = new JFileChooser();
+        FileChooser preview = new FileChooser();
+        ch.setAccessory(preview);
+        ch.addPropertyChangeListener(preview);
+        int c = ch.showOpenDialog(this);
+        if (c == JFileChooser.APPROVE_OPTION) {
+            Method.sendFile(ch.getSelectedFile());
+        }
+    }
+
     private void scrollToBottom(JScrollPane scrollPane) {
         JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
         AdjustmentListener downScroller = new AdjustmentListener() {
@@ -695,7 +870,29 @@ public class Main extends javax.swing.JFrame {
         verticalBar.addAdjustmentListener(downScroller);
     }
 
-   
+    private void setEmoji(String emoji) {
+        try {
+            Method.sendEmoji(emoji);
+        } catch (Exception e) {
+            showStatus("Error : " + e.getMessage());
+        }
+    }
+
+    private void playSound() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = this.getClass().getClassLoader().getResource("sound/sound.wav");
+                    AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+                    Clip clip = AudioSystem.getClip();
+                    clip.open(audioIn);
+                    clip.start();
+                } catch (Exception e) {
+                }
+            }
+        }).start();
+    }
     private Timer timer = new Timer(5000, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent ae) {
