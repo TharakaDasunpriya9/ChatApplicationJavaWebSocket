@@ -1,12 +1,17 @@
 package main;
-
+import function.FileChooser;
 import function.Method;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.filechooser.FileFilter;
 
 public class Login extends javax.swing.JFrame {
 
@@ -175,7 +180,7 @@ public class Login extends javax.swing.JFrame {
                     String userName = txtUser.getText().trim();
                     Method.connect(profile_pic, userName, IP);
                     this.dispose();
-                    
+                    Main.main(null);
                 }
 
             }
@@ -195,7 +200,36 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_cmdLoginActionPerformed
 
     private void borderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_borderMouseClicked
-        
+        if (evt.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(evt)) {
+            JFileChooser ch = new JFileChooser();
+            FileChooser preview = new FileChooser();
+            ch.setAccessory(preview);
+            ch.addPropertyChangeListener(preview);
+            ch.setFileFilter(new FileFilter() {
+                @Override
+                public boolean accept(File file) {
+                    String name = file.getName();
+                    return file.isDirectory() || name.endsWith(".png") || name.endsWith(".PNG") || name.endsWith("jpg") || name.endsWith("JPG");
+                }
+
+                @Override
+                public String getDescription() {
+                    return "png,jpg";
+                }
+            });
+            int opt = ch.showOpenDialog(this);
+            if (opt == JFileChooser.APPROVE_OPTION) {
+                ImageIcon image = new ImageIcon(ch.getSelectedFile().getAbsolutePath());
+                Image img;
+                if (image.getIconWidth() > image.getIconHeight()) {
+                    img = image.getImage().getScaledInstance(100, -1, Image.SCALE_SMOOTH);
+                } else {
+                    img = image.getImage().getScaledInstance(-1, 100, Image.SCALE_SMOOTH);
+                }
+                profile_pic = new ImageIcon(img);
+                profile.setIcon(profile_pic);
+            }
+        }
     }//GEN-LAST:event_borderMouseClicked
 
     private void txtUserKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUserKeyTyped

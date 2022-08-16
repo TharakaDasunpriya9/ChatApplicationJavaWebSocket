@@ -6,21 +6,37 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
+import main.Main;
 import message.Message;
 import model.Friend;
+import my_swing.ImageViewer;
 
 public class Method {
 
-   
+    public static Recoder getRecoder() {
+        return recoder;
+    }
+
+    public static void setRecoder(Recoder aRecoder) {
+        recoder = aRecoder;
+    }
+
     private static HashMap<Integer, Friend> friends = new HashMap<>();
     private static Socket client;
     private static ObjectOutputStream out;
@@ -29,7 +45,7 @@ public class Method {
     private static String myName;
     private static String time;
     private static JFrame fram;
-    
+    private static Recoder recoder = new Recoder();
 
     public static void setTextFieldSyle(JTextField txt, String style) {
         txt.setName("");
@@ -92,7 +108,14 @@ public class Method {
         out.flush();
     }
 
-    
+    public static void sendPhoto(ImageIcon photo) throws Exception {
+        Message ms = new Message();
+        ms.setStatus("Photo");
+        ms.setID(Method.getMyID());
+        ms.setImage(photo);
+        out.writeObject(ms);
+        out.flush();
+    }
 
     private static String getDurationString(int seconds) {
         int minutes = (seconds % 3600) / 60;
@@ -120,9 +143,74 @@ public class Method {
         return String.valueOf(number);
     }
 
-    
-    
-   
+    public static void sendSound(ByteArrayOutputStream sount, int time) throws Exception {
+        Message ms = new Message();
+        ms.setStatus("Sound");
+        ms.setID(Method.getMyID());
+        ms.setMessage(getDurationString(time) + "!" + time);
+        ms.setData(sount.toByteArray());
+        out.writeObject(ms);
+        out.flush();
+    }
+
+    public static void downloadFile(int ID, String name) {
+        try {
+            String ex[] = name.split("\\.");
+            String x = ex[ex.length - 1];
+            JFileChooser ch = new JFileChooser();
+            ch.setSelectedFile(new File(name));
+            int c = ch.showSaveDialog(Main.getFrames()[0]);
+            if (c == JFileChooser.APPROVE_OPTION) {
+                File f = ch.getSelectedFile();
+                if (f.exists()) {
+                    int click = JOptionPane.showConfirmDialog(Main.getFrames()[0], "This file name has already do you want to replace", "Save File", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (click != JOptionPane.YES_OPTION) {
+                        return;
+                    }
+                }
+                String parth = f.getAbsolutePath();
+                if (!parth.endsWith("." + x)) {
+                    parth += "." + x;
+                }
+                Message ms = new Message();
+                ms.setStatus("download");
+                ms.setID(Method.getMyID());
+                ms.setName(parth);
+                ms.setMessage(ID + "");
+                out.writeObject(ms);
+                out.flush();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(fram, e, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void showImage(ImageIcon image) {
+        JPopupMenu pop = new JPopupMenu();
+        pop.setBackground(new Color(0, 0, 0, 0));
+        ImageViewer obj = new ImageViewer();
+        obj.setImage(image);
+        pop.add(obj);
+        int w = (int) obj.getPreferredSize().getWidth();
+        int h = (int) obj.getPreferredSize().getHeight();
+        pop.show(fram, fram.getWidth() / 2 - w / 2, fram.getHeight() / 2 - h / 2);
+    }
+    private static final String[] fileSizeUnits = {"bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
+
+    private static String convertSize(double bytes) {
+        String sizeToReturn;
+        DecimalFormat df = new DecimalFormat("0.#");
+        int index;
+        for (index = 0; index < fileSizeUnits.length; index++) {
+            if (bytes < 1024) {
+                break;
+            }
+            bytes = bytes / 1024;
+        }
+        System.out.println("Systematic file size: " + bytes + " " + fileSizeUnits[index]);
+        sizeToReturn = df.format(bytes) + " " + fileSizeUnits[index];
+        return sizeToReturn;
+    }
 
     public static Font getFount() {
         return new java.awt.Font("Khmer SBBIC Serif", 0, 12);
